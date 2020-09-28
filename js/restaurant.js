@@ -1,4 +1,4 @@
-var Restaurant = function(id, nombre, rubro, ubicacion, horarios, imagen, calificaciones) {
+var Restaurant = function (id, nombre, rubro, ubicacion, horarios, imagen, calificaciones) {
     this.id = id;
     this.nombre = nombre;
     this.rubro = rubro;
@@ -8,32 +8,35 @@ var Restaurant = function(id, nombre, rubro, ubicacion, horarios, imagen, califi
     this.calificaciones = calificaciones;
 }
 
-Restaurant.prototype.reservarHorario = function(horarioReservado) {
-    for (var i = 0; i < this.horarios.length; i++) {
-        if (this.horarios[i] === horarioReservado) {
-            this.horarios.splice(i, 1);
-            return;
-        }
-    }
+Restaurant.prototype.reservarHorario = function (horarioReservado) {
+    //refactorizado
+    this.horarios = this.horarios.filter(horario => horario !== horarioReservado);
 }
 
-Restaurant.prototype.calificar = function(nuevaCalificacion) {
-    if (Number.isInteger(nuevaCalificacion) && nuevaCalificacion > 0 && nuevaCalificacion < 10) {
+Restaurant.prototype.calificar = function (nuevaCalificacion) {
+    if (Number.isInteger(nuevaCalificacion) && nuevaCalificacion > 0 && nuevaCalificacion <= 10) {
         this.calificaciones.push(nuevaCalificacion);
     }
 }
 
-Restaurant.prototype.obtenerPuntuacion = function() {
-    if (this.calificaciones.length === 0) {
+Restaurant.prototype.obtenerPuntuacion = function () {
+    if (!this.calificaciones || this.calificaciones.length === 0) {
         return 0;
     } else {
-        var sumatoria = 0;
-        for (var i = 0; i < this.calificaciones.length; i++) {
-            sumatoria += this.calificaciones[i]
-        }
-        var promedio = sumatoria / this.calificaciones.length;
-        return Math.round(promedio * 10) / 10;
+        return promedio(this.calificaciones);
     }
-
 }
 
+function promedio(arreglo) {
+    let prom = sumatoria(arreglo) / arreglo.length
+
+    return Math.round(prom * 10) / 10
+}
+
+function sumatoria(arreglo) {
+    let total = 0;
+    arreglo.forEach(element => {
+        total += isNaN(element) ? 0 : element
+    });
+    return total;
+}
